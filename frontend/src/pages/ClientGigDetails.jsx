@@ -55,12 +55,18 @@ const ClientGigDetails = () => {
 
   const handleFundEscrow = async (milestoneId) => {
     try {
-      // 1. Create order
+      // 1. Create order on backend
       const orderRes = await api.post('/payments/order', { gigId: id, milestoneId });
-      if (orderRes.data.success) {
-        const order = orderRes.data.data;
-        
-        // 2. Call verify (mocking payment signature for simplicity on developer end)
+      if (!orderRes.data.success) {
+        alert('Failed to initialize payment order');
+        return;
+      }
+      
+      const order = orderRes.data.data;
+
+      // Check if it is a mock order (returned when no real keys are set)
+      if (order.id.startsWith('order_mock_')) {
+        console.log('Mock payment order detected. Bypassing real gateway overlay...');
         const verifyRes = await api.post('/payments/verify', {
           gigId: id,
           milestoneId,
@@ -70,11 +76,72 @@ const ClientGigDetails = () => {
         });
 
         if (verifyRes.data.success) {
-          alert('Milestone funded and deposited in Escrow successfully!');
+          alert('Milestone funded and deposited in Escrow successfully! (Sandbox/Mock)');
           fetchGigAndProposals();
         }
+        return;
       }
+
+      // Load Razorpay script dynamically
+      const loadScript = () => {
+        return new Promise((resolve) => {
+          if (window.Razorpay) {
+            resolve(true);
+            return;
+          }
+          const script = document.createElement('script');
+          script.src = 'https://checkout.razorpay.com/v1/checkout.js';
+          script.onload = () => resolve(true);
+          script.onerror = () => resolve(false);
+          document.body.appendChild(script);
+        });
+      };
+
+      const isScriptLoaded = await loadScript();
+      if (!isScriptLoaded) {
+        alert('Failed to load payment gateway script. Check your internet connection.');
+        return;
+      }
+
+      // Configure checkout options
+      const options = {
+        key: import.meta.env.VITE_RAZORPAY_KEY_ID || 'rzp_test_mockkeyid123',
+        amount: order.amount,
+        currency: order.currency,
+        name: 'SkillSphere',
+        description: 'Fund Escrow Milestone',
+        order_id: order.id,
+        handler: async function (response) {
+          try {
+            const verifyRes = await api.post('/payments/verify', {
+              gigId: id,
+              milestoneId,
+              razorpayOrderId: response.razorpay_order_id,
+              razorpayPaymentId: response.razorpay_payment_id,
+              razorpaySignature: response.razorpay_signature
+            });
+            if (verifyRes.data.success) {
+              alert('Milestone funded and deposited in Escrow successfully!');
+              fetchGigAndProposals();
+            }
+          } catch (verifyErr) {
+            alert(verifyErr.response?.data?.message || 'Payment signature verification failed.');
+          }
+        },
+        prefill: {
+          name: user?.name || '',
+          email: user?.email || ''
+        },
+        theme: {
+          color: '#0ea5e9'
+        }
+      };
+
+      const rzp = new window.Razorpay(options);
+      rzp.open();
+
     } catch (err) {
+      console.error(err);
       alert('Failed to fund milestone escrow.');
     }
   };
