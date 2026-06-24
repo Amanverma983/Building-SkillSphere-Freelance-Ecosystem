@@ -11,6 +11,7 @@ import Register from './pages/Register.jsx';
 import BrowseGigs from './pages/BrowseGigs.jsx';
 import BrowseFreelancers from './pages/BrowseFreelancers.jsx';
 import GigDetails from './pages/GigDetails.jsx';
+import FreelancerDetails from './pages/FreelancerDetails.jsx';
 
 // Client Pages
 import ClientDashboard from './pages/ClientDashboard.jsx';
@@ -42,6 +43,7 @@ const App = () => {
             <Route path="/gigs" element={<BrowseGigs />} />
             <Route path="/gigs/:id" element={<GigDetails />} />
             <Route path="/freelancers" element={<BrowseFreelancers />} />
+            <Route path="/freelancers/:id" element={<FreelancerDetails />} />
 
             {/* ─── Client Routes ─── */}
             <Route element={<ProtectedRoute allowedRoles={['client']} />}>
