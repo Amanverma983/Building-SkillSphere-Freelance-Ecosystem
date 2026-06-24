@@ -14,8 +14,11 @@ export const SocketProvider = ({ children }) => {
     let socketClient;
 
     if (isAuthenticated && user) {
-      // Connect to root backend
-      socketClient = io(window.location.origin, {
+      const backendUrl = import.meta.env.VITE_API_URL 
+        ? import.meta.env.VITE_API_URL.replace('/api', '') 
+        : window.location.origin;
+
+      socketClient = io(backendUrl, {
         withCredentials: true,
       });
 

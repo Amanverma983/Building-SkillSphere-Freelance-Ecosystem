@@ -1,4 +1,4 @@
-const API_URL = '/api';
+const API_URL = import.meta.env.VITE_API_URL || '/api';
 
 import axios from 'axios';
 
@@ -31,7 +31,7 @@ api.interceptors.response.use(
     if (error.response?.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
       try {
-        const refreshResponse = await axios.post('/api/auth/refresh', {
+        const refreshResponse = await axios.post(`${API_URL}/auth/refresh`, {
           token: localStorage.getItem('token') // Use token for reference (we store token in cookies HTTP-only, but local refresh reference works too)
         });
         
