@@ -1,12 +1,15 @@
 import React, { useEffect, useState, useRef } from 'react';
+import { useLocation } from 'react-router-dom';
 import { useSocket } from '../context/SocketContext';
 import { useSelector } from 'react-redux';
 import api from '../utils/api';
-import { Send, Paperclip, Search, Circle } from 'lucide-react';
+import { Send, Paperclip, Search, Circle, MessageSquare } from 'lucide-react';
 
 const Chat = () => {
   const socket = useSocket();
   const { user } = useSelector((state) => state.auth);
+  const location = useLocation();
+  const partnerFromState = location.state?.partner;
   
   const [conversations, setConversations] = useState([]);
   const [activePartner, setActivePartner] = useState(null);
@@ -84,12 +87,33 @@ const Chat = () => {
     try {
       const res = await api.get('/chat/conversations');
       if (res.data.success) {
-        setConversations(res.data.data);
+        let list = res.data.data;
+        if (partnerFromState) {
+          const partnerId = partnerFromState._id || partnerFromState.id;
+          const exists = list.some((c) => c.partner?._id === partnerId || c.partner?.id === partnerId);
+          if (!exists) {
+            list = [
+              {
+                partner: partnerFromState,
+                lastMessage: { message: 'Start a new conversation...', createdAt: new Date().toISOString() },
+                unreadCount: 0
+              },
+              ...list
+            ];
+          }
+        }
+        setConversations(list);
       }
     } catch (err) {
       console.error(err);
     }
   };
+
+  useEffect(() => {
+    if (partnerFromState) {
+      setActivePartner(partnerFromState);
+    }
+  }, [partnerFromState]);
 
   const fetchMessages = async (partnerId) => {
     try {

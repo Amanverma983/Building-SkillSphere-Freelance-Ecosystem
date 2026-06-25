@@ -32,21 +32,14 @@ const FreelancerDetails = () => {
     }
   };
 
-  const handleContact = async () => {
+  const handleContact = () => {
     if (!isAuthenticated) {
       navigate('/login');
       return;
     }
     
-    try {
-      // Create or get existing chat room with this freelancer
-      const res = await api.post('/chat/rooms', { recipientId: id });
-      if (res.data.success) {
-        navigate('/chat');
-      }
-    } catch (err) {
-      alert('Unable to start chat room. Please try again.');
-    }
+    // Navigate to Chat page with the freelancer's user info as state
+    navigate('/chat', { state: { partner: freelancer.user } });
   };
 
   if (loading) {

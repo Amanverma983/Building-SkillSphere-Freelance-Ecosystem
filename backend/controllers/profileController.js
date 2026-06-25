@@ -30,12 +30,18 @@ exports.getMyProfile = async (req, res, next) => {
 // @access  Public
 exports.getFreelancerProfile = async (req, res, next) => {
   try {
-    const profile = await Freelancer.findOne({
-      $or: [
+    const mongoose = require('mongoose');
+    const query = {};
+    if (mongoose.Types.ObjectId.isValid(req.params.id)) {
+      query.$or = [
         { user: req.params.id },
         { publicSlug: req.params.id }
-      ]
-    }).populate('user');
+      ];
+    } else {
+      query.publicSlug = req.params.id;
+    }
+
+    const profile = await Freelancer.findOne(query).populate('user');
 
     if (!profile) {
       return res.status(404).json({ success: false, message: 'Freelancer profile not found' });

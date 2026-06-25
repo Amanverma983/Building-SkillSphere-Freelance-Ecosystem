@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import api from '../utils/api';
-import { MapPin, DollarSign, Clock, ArrowLeft, ShieldAlert, CheckCircle2 } from 'lucide-react';
+import { MapPin, DollarSign, Clock, ArrowLeft, ShieldAlert, CheckCircle2, MessageSquare } from 'lucide-react';
 
 const GigDetails = () => {
   const { id } = useParams();
@@ -151,16 +151,27 @@ const GigDetails = () => {
               <div className="glass-card p-5 rounded-xl border border-slate-800 space-y-3">
                 <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider">Posted By</h3>
                 {gig.client && (
-                  <div className="flex items-center space-x-3">
-                    <img
-                      src={gig.client.avatar || 'https://via.placeholder.com/150'}
-                      alt={gig.client.name}
-                      className="h-10 w-10 rounded-full object-cover border border-slate-700"
-                    />
-                    <div>
-                      <h4 className="text-sm font-bold text-slate-200">{gig.client.name}</h4>
-                      <span className="text-[10px] text-slate-500">Client</span>
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-3">
+                      <img
+                        src={gig.client.avatar || 'https://via.placeholder.com/150'}
+                        alt={gig.client.name}
+                        className="h-10 w-10 rounded-full object-cover border border-slate-700"
+                      />
+                      <div>
+                        <h4 className="text-sm font-bold text-slate-200">{gig.client.name}</h4>
+                        <span className="text-[10px] text-slate-500">Client</span>
+                      </div>
                     </div>
+                    {isAuthenticated && user?.role === 'freelancer' && (
+                      <Link
+                        to="/chat"
+                        state={{ partner: gig.client }}
+                        className="p-2 bg-slate-900 border border-slate-800 hover:border-slate-700 rounded text-slate-400 hover:text-slate-200 transition-colors"
+                      >
+                        <MessageSquare className="h-4 w-4" />
+                      </Link>
+                    )}
                   </div>
                 )}
               </div>

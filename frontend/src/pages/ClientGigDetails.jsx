@@ -244,18 +244,24 @@ const ClientGigDetails = () => {
                   <div key={p._id} className="py-4 space-y-3">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center space-x-2">
-                        <img
-                          src={p.freelancer.avatar || 'https://via.placeholder.com/150'}
-                          alt={p.freelancer.name}
-                          className="h-8 w-8 rounded-full object-cover"
-                        />
-                        <div>
-                          <h4 className="text-xs font-bold text-slate-200">{p.freelancer.name}</h4>
-                          <span className="text-[9px] text-slate-500">Bid amount: ₹{p.bidAmount} in {p.duration} days</span>
-                        </div>
+                        <Link to={`/freelancers/${p.freelancer._id}`} className="flex items-center space-x-2 group">
+                          <img
+                            src={p.freelancer.avatar || 'https://via.placeholder.com/150'}
+                            alt={p.freelancer.name}
+                            className="h-8 w-8 rounded-full object-cover group-hover:opacity-80 transition-opacity"
+                          />
+                          <div>
+                            <h4 className="text-xs font-bold text-slate-200 group-hover:text-primary-400 transition-colors">{p.freelancer.name}</h4>
+                            <span className="text-[9px] text-slate-500">Bid amount: ₹{p.bidAmount} in {p.duration} days</span>
+                          </div>
+                        </Link>
                       </div>
                       <div className="flex items-center space-x-2">
-                        <Link to="/chat" className="p-1.5 bg-slate-900 border border-slate-800 rounded text-slate-400 hover:text-slate-200">
+                        <Link 
+                          to="/chat" 
+                          state={{ partner: p.freelancer }}
+                          className="p-1.5 bg-slate-900 border border-slate-800 rounded text-slate-400 hover:text-slate-200"
+                        >
                           <MessageSquare className="h-4 w-4" />
                         </Link>
                         <button
@@ -280,10 +286,21 @@ const ClientGigDetails = () => {
           <div className="glass-card p-6 rounded-2xl border border-slate-800 space-y-4">
             <div className="flex justify-between items-center">
               <h3 className="text-sm font-bold text-slate-300 uppercase tracking-wider">Milestone Payments</h3>
-              <Link to="/chat" className="flex items-center space-x-1 text-xs text-primary-400 hover:underline">
-                <MessageSquare className="h-4.5 w-4.5" />
-                <span>Chat Collaborator</span>
-              </Link>
+              {gig.freelancer ? (
+                <Link 
+                  to="/chat" 
+                  state={{ partner: gig.freelancer }}
+                  className="flex items-center space-x-1 text-xs text-primary-400 hover:underline"
+                >
+                  <MessageSquare className="h-4.5 w-4.5" />
+                  <span>Chat Collaborator</span>
+                </Link>
+              ) : (
+                <Link to="/chat" className="flex items-center space-x-1 text-xs text-primary-400 hover:underline">
+                  <MessageSquare className="h-4.5 w-4.5" />
+                  <span>Chat Collaborator</span>
+                </Link>
+              )}
             </div>
             <div className="space-y-3">
               {gig.milestones.map((m) => (
