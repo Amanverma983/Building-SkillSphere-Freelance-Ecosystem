@@ -46,8 +46,14 @@ exports.createGig = async (req, res, next) => {
 // @access  Public
 exports.getGigs = async (req, res, next) => {
   try {
-    const { skills, minBudget, maxBudget, budgetType, address, latitude, longitude, radius, search } = req.query;
-    let query = { status: 'published' };
+    const { skills, minBudget, maxBudget, budgetType, address, latitude, longitude, radius, search, client } = req.query;
+    let query = {};
+
+    if (client) {
+      query.client = client;
+    } else {
+      query.status = 'published';
+    }
 
     // Text Search
     if (search) {

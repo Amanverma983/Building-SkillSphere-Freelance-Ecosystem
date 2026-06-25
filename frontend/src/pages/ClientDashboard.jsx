@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 import api from '../utils/api';
 import { PlusCircle, FileText, IndianRupee, Briefcase, ChevronRight } from 'lucide-react';
 
 const ClientDashboard = () => {
+  const { user } = useSelector((state) => state.auth);
   const [gigs, setGigs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [totalSpent, setTotalSpent] = useState(0);
@@ -21,10 +23,10 @@ const ClientDashboard = () => {
         setTotalSpent(profileRes.data.data.spentAmount || 0);
       }
 
-      // Get my posted gigs
-      const gigsRes = await api.get('/gigs');
+      // Get my posted gigs (filtered by my User ID)
+      const clientId = user?.id || user?._id;
+      const gigsRes = await api.get(`/gigs?client=${clientId}`);
       if (gigsRes.data.success) {
-        // Filter gigs where client is me
         const myGigs = gigsRes.data.data; 
         setGigs(myGigs);
       }
