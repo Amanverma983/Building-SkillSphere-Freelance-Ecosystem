@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import api from '../utils/api';
-import { ShieldAlert, MapPin, Check, UserCheck } from 'lucide-react';
+import { ShieldAlert, MapPin, Check, UserCheck, Camera } from 'lucide-react';
 import { useSelector, useDispatch } from 'react-redux';
 import { updateUserProfile } from '../store/authSlice';
 
@@ -22,6 +22,33 @@ const ClientProfile = () => {
   // 2FA Setup State
   const [show2FAModal, setShow2FAModal] = useState(false);
   const [twoFactorSecret, setTwoFactorSecret] = useState('');
+
+  const handleAvatarChange = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onloadend = async () => {
+      try {
+        setLoading(true);
+        setErrorMsg('');
+        setSuccessMsg('');
+        const res = await api.post('/profile/upload', {
+          file: reader.result,
+          type: 'avatar'
+        });
+        if (res.data.success) {
+          dispatch(updateUserProfile({ avatar: res.data.url }));
+          setSuccessMsg('Profile picture updated successfully!');
+        }
+      } catch (err) {
+        setErrorMsg(err.response?.data?.message || 'Failed to upload profile picture.');
+      } finally {
+        setLoading(false);
+      }
+    };
+    reader.readAsDataURL(file);
+  };
 
   useEffect(() => {
     fetchProfile();
@@ -123,14 +150,24 @@ const ClientProfile = () => {
         
         {/* Left Column: Security Info */}
         <div className="space-y-6">
-          <div className="glass-card p-6 rounded-2xl border border-slate-800 text-center space-y-4">
-            <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider">Client Account</h3>
-            <div className="flex flex-col items-center">
-              <div className="h-20 w-20 rounded-full bg-slate-900 border border-slate-800 flex items-center justify-center text-slate-400 font-bold text-xl uppercase">
-                {companyName ? companyName.substring(0, 2) : user?.name?.substring(0, 2)}
-              </div>
-              <h2 className="text-sm font-bold text-slate-200 mt-3">{companyName || 'Corporate Client'}</h2>
-              <span className="text-[10px] text-slate-500 mt-0.5">{user?.email}</span>
+          {/* Avatar Upload Card */}
+          <div className="glass-card p-6 rounded-2xl border border-slate-800 flex flex-col items-center space-y-4 animate-fadeIn">
+            <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider">Profile Picture</h3>
+            <div className="relative group cursor-pointer h-24 w-24 rounded-full overflow-hidden border-2 border-slate-700 hover:border-primary-500 transition-colors">
+              <img
+                src={user?.avatar || 'https://api.dicebear.com/7.x/avataaars/svg?seed=priya'}
+                alt={user?.name}
+                className="h-full w-full object-cover group-hover:scale-105 transition-transform"
+              />
+              <label className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center cursor-pointer text-slate-200">
+                <Camera className="h-5 w-5 text-white" />
+                <span className="text-[9px] mt-1 font-semibold">Upload</span>
+                <input type="file" accept="image/*" onChange={handleAvatarChange} className="hidden" />
+              </label>
+            </div>
+            <div className="text-center">
+              <h4 className="text-xs font-bold text-slate-300">{companyName || user?.name}</h4>
+              <span className="text-[10px] text-slate-500 capitalize">{user?.role}</span>
             </div>
           </div>
 

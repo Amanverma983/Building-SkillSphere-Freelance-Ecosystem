@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import api from '../utils/api';
-import { ShieldAlert, Plus, Trash, Check, UserCheck, Calendar } from 'lucide-react';
+import { ShieldAlert, Plus, Trash, Check, UserCheck, Calendar, Camera } from 'lucide-react';
 import { useSelector, useDispatch } from 'react-redux';
 import { updateUserProfile } from '../store/authSlice';
 
@@ -29,6 +29,33 @@ const FreelancerProfile = () => {
   // 2FA Setup
   const [show2FAModal, setShow2FAModal] = useState(false);
   const [twoFactorSecret, setTwoFactorSecret] = useState('');
+
+  const handleAvatarChange = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onloadend = async () => {
+      try {
+        setLoading(true);
+        setErrorMsg('');
+        setSuccessMsg('');
+        const res = await api.post('/profile/upload', {
+          file: reader.result,
+          type: 'avatar'
+        });
+        if (res.data.success) {
+          dispatch(updateUserProfile({ avatar: res.data.url }));
+          setSuccessMsg('Profile picture updated successfully!');
+        }
+      } catch (err) {
+        setErrorMsg(err.response?.data?.message || 'Failed to upload profile picture.');
+      } finally {
+        setLoading(false);
+      }
+    };
+    reader.readAsDataURL(file);
+  };
 
   useEffect(() => {
     fetchProfile();
@@ -129,6 +156,27 @@ const FreelancerProfile = () => {
         
         {/* Left Column: Stats & Setup */}
         <div className="space-y-6">
+          {/* Avatar Upload Card */}
+          <div className="glass-card p-6 rounded-2xl border border-slate-800 flex flex-col items-center space-y-4 animate-fadeIn">
+            <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider">Profile Picture</h3>
+            <div className="relative group cursor-pointer h-24 w-24 rounded-full overflow-hidden border-2 border-slate-700 hover:border-primary-500 transition-colors">
+              <img
+                src={user?.avatar || 'https://api.dicebear.com/7.x/avataaars/svg?seed=arjun'}
+                alt={user?.name}
+                className="h-full w-full object-cover group-hover:scale-105 transition-transform"
+              />
+              <label className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center cursor-pointer text-slate-200">
+                <Camera className="h-5 w-5 text-white" />
+                <span className="text-[9px] mt-1 font-semibold">Upload</span>
+                <input type="file" accept="image/*" onChange={handleAvatarChange} className="hidden" />
+              </label>
+            </div>
+            <div className="text-center">
+              <h4 className="text-xs font-bold text-slate-300">{user?.name}</h4>
+              <span className="text-[10px] text-slate-500 capitalize">{user?.role}</span>
+            </div>
+          </div>
+
           {/* Profile completion badge */}
           <div className="glass-card p-6 rounded-2xl border border-slate-800 text-center space-y-4">
             <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider">Profile Status</h3>
