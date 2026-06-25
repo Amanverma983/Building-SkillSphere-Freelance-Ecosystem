@@ -7,7 +7,7 @@ const Client = require('../models/Client');
 const { createNotification } = require('../services/notificationService');
 
 let razorpayInstance;
-if (process.env.RAZORPAY_KEY_ID && process.env.RAZORPAY_KEY_ID.startsWith('rzp_') && process.env.RAZORPAY_KEY_SECRET) {
+if (process.env.RAZORPAY_KEY_ID && !process.env.RAZORPAY_KEY_ID.includes('mock')) {
   razorpayInstance = new Razorpay({
     key_id: process.env.RAZORPAY_KEY_ID,
     key_secret: process.env.RAZORPAY_KEY_SECRET

@@ -1,12 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { useSelector } from 'react-redux';
 import api from '../utils/api';
 import { ShieldAlert, Check, AlertTriangle, ArrowLeft, MessageSquare, ShieldCheck } from 'lucide-react';
 
 const ClientGigDetails = () => {
   const { id } = useParams();
-  const { user } = useSelector((state) => state.auth);
   const [gig, setGig] = useState(null);
   const [proposals, setProposals] = useState([]);
   const [loading, setLoading] = useState(true);

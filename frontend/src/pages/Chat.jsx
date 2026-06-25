@@ -1,9 +1,8 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { Link } from 'react-router-dom';
 import { useSocket } from '../context/SocketContext';
 import { useSelector } from 'react-redux';
 import api from '../utils/api';
-import { Send, Paperclip, Search, Circle, MessageSquare } from 'lucide-react';
+import { Send, Paperclip, Search, Circle } from 'lucide-react';
 
 const Chat = () => {
   const socket = useSocket();
@@ -224,37 +223,20 @@ const Chat = () => {
           <>
             {/* Header */}
             <div className="p-4 border-b border-slate-800 flex items-center justify-between bg-slate-900/40">
-              {activePartner.role === 'freelancer' ? (
-                <Link to={`/freelancers/${activePartner._id}`} className="flex items-center space-x-3 group">
-                  <img
-                    src={activePartner.avatar || 'https://via.placeholder.com/150'}
-                    alt={activePartner.name}
-                    className="h-9 w-9 rounded-full object-cover border border-slate-700"
-                  />
-                  <div>
-                    <h3 className="text-sm font-semibold text-slate-200 group-hover:text-primary-400 group-hover:underline">{activePartner.name}</h3>
-                    <div className="flex items-center space-x-1 mt-0.5">
-                      <Circle className={`h-2 w-2 fill-current ${partnerOnline ? 'text-green-500' : 'text-slate-500'}`} />
-                      <span className="text-[10px] text-slate-400 capitalize">{partnerOnline ? 'online' : 'offline'}</span>
-                    </div>
-                  </div>
-                </Link>
-              ) : (
-                <div className="flex items-center space-x-3">
-                  <img
-                    src={activePartner.avatar || 'https://via.placeholder.com/150'}
-                    alt={activePartner.name}
-                    className="h-9 w-9 rounded-full object-cover border border-slate-700"
-                  />
-                  <div>
-                    <h3 className="text-sm font-semibold text-slate-200">{activePartner.name}</h3>
-                    <div className="flex items-center space-x-1 mt-0.5">
-                      <Circle className={`h-2 w-2 fill-current ${partnerOnline ? 'text-green-500' : 'text-slate-500'}`} />
-                      <span className="text-[10px] text-slate-400 capitalize">{partnerOnline ? 'online' : 'offline'}</span>
-                    </div>
+              <div className="flex items-center space-x-3">
+                <img
+                  src={activePartner.avatar || 'https://via.placeholder.com/150'}
+                  alt={activePartner.name}
+                  className="h-9 w-9 rounded-full object-cover border border-slate-700"
+                />
+                <div>
+                  <h3 className="text-sm font-semibold text-slate-200">{activePartner.name}</h3>
+                  <div className="flex items-center space-x-1 mt-0.5">
+                    <Circle className={`h-2 w-2 fill-current ${partnerOnline ? 'text-green-500' : 'text-slate-500'}`} />
+                    <span className="text-[10px] text-slate-400 capitalize">{partnerOnline ? 'online' : 'offline'}</span>
                   </div>
                 </div>
-              )}
+              </div>
             </div>
 
             {/* Chat Thread */}
