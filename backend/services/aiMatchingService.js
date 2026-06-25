@@ -74,7 +74,7 @@ exports.recommendFreelancersForGig = async (gigId, limit = 5) => {
 
   // Calculate scores and sort
   const scoredFreelancers = freelancers.map(freelancer => {
-    const score = this.calculateMatchScore(freelancer, gig);
+    const score = exports.calculateMatchScore(freelancer, gig);
     return {
       freelancer,
       score
@@ -109,7 +109,7 @@ exports.recommendGigsForFreelancer = async (freelancerId, limit = 10) => {
   }
 
   const scoredGigs = gigs.map(gig => {
-    const score = this.calculateMatchScore(freelancer, gig);
+    const score = exports.calculateMatchScore(freelancer, gig);
     return {
       gig,
       score

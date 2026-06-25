@@ -50,6 +50,10 @@ exports.getGigs = async (req, res, next) => {
     let query = {};
 
     if (client) {
+      const mongoose = require('mongoose');
+      if (!mongoose.Types.ObjectId.isValid(client)) {
+        return res.status(400).json({ success: false, message: 'Invalid client ID format' });
+      }
       query.client = client;
     } else {
       query.status = 'published';
