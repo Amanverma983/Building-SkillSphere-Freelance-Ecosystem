@@ -127,6 +127,12 @@ const Navbar = () => {
                     <span className="text-xs">{user.name}</span>
                   </Link>
                 )}
+                {user.role === 'client' && (
+                  <Link to="/client/profile" className="flex items-center space-x-1 p-2 hover:text-primary-500 transition-colors">
+                    <User className="h-4 w-4" />
+                    <span className="text-xs">{user.name}</span>
+                  </Link>
+                )}
 
                 {/* Logout Button */}
                 <button onClick={handleLogout} className="flex items-center space-x-1 px-3 py-2 text-sm font-medium text-red-400 hover:text-red-500 transition-colors">
@@ -159,10 +165,16 @@ const Navbar = () => {
           {isAuthenticated ? (
             <>
               {user.role === 'client' && (
-                <Link to="/client/dashboard" className="block px-3 py-2 rounded-md text-base font-medium text-slate-300 hover:bg-slate-800 hover:text-white">Client Hub</Link>
+                <>
+                  <Link to="/client/dashboard" className="block px-3 py-2 rounded-md text-base font-medium text-slate-300 hover:bg-slate-800 hover:text-white">Client Hub</Link>
+                  <Link to="/client/profile" className="block px-3 py-2 rounded-md text-base font-medium text-slate-300 hover:bg-slate-800 hover:text-white">Profile</Link>
+                </>
               )}
               {user.role === 'freelancer' && (
-                <Link to="/freelancer/dashboard" className="block px-3 py-2 rounded-md text-base font-medium text-slate-300 hover:bg-slate-800 hover:text-white">Freelancer Hub</Link>
+                <>
+                  <Link to="/freelancer/dashboard" className="block px-3 py-2 rounded-md text-base font-medium text-slate-300 hover:bg-slate-800 hover:text-white">Freelancer Hub</Link>
+                  <Link to="/freelancer/profile" className="block px-3 py-2 rounded-md text-base font-medium text-slate-300 hover:bg-slate-800 hover:text-white">Profile</Link>
+                </>
               )}
               <Link to="/chat" className="block px-3 py-2 rounded-md text-base font-medium text-slate-300 hover:bg-slate-800 hover:text-white">Chat</Link>
               <button onClick={handleLogout} className="block w-full text-left px-3 py-2 rounded-md text-base font-medium text-red-400 hover:bg-slate-800 hover:text-red-500">Logout</button>

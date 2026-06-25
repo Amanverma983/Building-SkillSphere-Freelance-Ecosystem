@@ -17,6 +17,7 @@ import FreelancerDetails from './pages/FreelancerDetails.jsx';
 import ClientDashboard from './pages/ClientDashboard.jsx';
 import PostGig from './pages/PostGig.jsx';
 import ClientGigDetails from './pages/ClientGigDetails.jsx';
+import ClientProfile from './pages/ClientProfile.jsx';
 
 // Freelancer Pages
 import FreelancerDashboard from './pages/FreelancerDashboard.jsx';
@@ -50,6 +51,7 @@ const App = () => {
               <Route path="/client/dashboard" element={<ClientDashboard />} />
               <Route path="/client/post-gig" element={<PostGig />} />
               <Route path="/client/gigs/:id" element={<ClientGigDetails />} />
+              <Route path="/client/profile" element={<ClientProfile />} />
             </Route>
 
             {/* ─── Freelancer Routes ─── */}
